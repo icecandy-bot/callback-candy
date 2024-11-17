@@ -51,14 +51,37 @@
     <h1>認證成功！</h1>
     
     <div class="user-info">
-        <h2>歡迎，<%= username %>!</h2>
-        <p>您的 Discord ID: <%= userID %></p>
+        <h2 id="username">歡迎，請稍候...</h2>
+        <p id="userID"></p>
     </div>
 
     <div class="container">
         <p>您已成功認證！感謝您的操作。</p>
-        <!-- 將返回首頁的連結改為開啟 Discord -->
         <a href="https://discord.com/" class="btn" target="_blank">返回 Discord</a>
     </div>
+
+    <script>
+ 
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+
+        if (code) {
+       
+            fetch(`https://your-server-url/api/userinfo?code=${code}`)
+                .then(response => response.json())
+                .then(data => {
+                    
+                    document.getElementById('username').textContent = `歡迎，${data.username}`;
+                    document.getElementById('userID').textContent = `您的 Discord ID: ${data.userID}`;
+                })
+                .catch(error => {
+                    console.error('獲取用戶訊息', error);
+                    document.getElementById('username').textContent = "認證失敗";
+                    document.getElementById('userID').textContent = "";
+                });
+        } else {
+            document.getElementById('username').textContent = "無效的認證代碼";
+        }
+    </script>
 </body>
 </html>
